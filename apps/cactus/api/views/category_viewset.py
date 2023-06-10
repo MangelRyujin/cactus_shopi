@@ -6,7 +6,7 @@ from rest_framework import status
 
 class CategoryViewSet(viewsets.GenericViewSet):
     serializer_class = CategoySerializers
-    
+
     
     def get_queryset(self,pk = None):
         if pk is None:
@@ -28,3 +28,10 @@ class CategoryViewSet(viewsets.GenericViewSet):
             return Response({'message':'Categoria creada correctamente'}, status=status.HTTP_201_CREATED)
         return Response({'errors':category_serializers.errors}, status= status.HTTP_400_BAD_REQUEST)
     
+    def retrieve(self, request, pk = None):
+        
+        categorys = self.get_queryset(pk)
+        if categorys:
+            categorys_serializers = self.serializer_class(categorys)
+            return Response(categorys_serializers.data, status= status.HTTP_200_OK)
+        return Response({'message':'No existe la categoria'}, status= status.HTTP_400_BAD_REQUEST)
