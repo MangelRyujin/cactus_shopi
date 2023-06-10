@@ -46,3 +46,11 @@ class CategoryViewSet(viewsets.GenericViewSet):
             else:
              return Response(category_serializer.errors,status = status.HTTP_400_BAD_REQUEST) 
         return Response({'message':'No existe la categoría que desea editar!'},status = status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk = None):
+        
+        category = self.get_queryset(pk)
+        if category:
+            category.delete()
+            return Response({'message':'La categoría ha sido eliminado correctamente!'}, status = status.HTTP_200_OK)
+        return Response({'error':'No existe la categoría que desea eliminar!'},status = status.HTTP_400_BAD_REQUEST)
