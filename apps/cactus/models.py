@@ -28,10 +28,10 @@ class Plant(models.Model):
     # TODO: Define fields here
 
     class Meta:
-        """Meta definition for MODELNAME."""
+        """Meta definition for Plant."""
 
-        verbose_name = 'MODELNAME'
-        verbose_name_plural = 'MODELNAMEs'
+        verbose_name = 'Plant'
+        verbose_name_plural = 'Plants'
 
     def __str__(self):
         return self.name
