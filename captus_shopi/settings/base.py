@@ -37,7 +37,7 @@ BASE_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.captus',
+    'apps.cactus',
 ]
 
 
