@@ -35,3 +35,14 @@ class CategoryViewSet(viewsets.GenericViewSet):
             categorys_serializers = self.serializer_class(categorys)
             return Response(categorys_serializers.data, status= status.HTTP_200_OK)
         return Response({'message':'No existe la categoria'}, status= status.HTTP_400_BAD_REQUEST)
+    
+    def update(self,request,pk=None):
+        
+        if self.get_queryset(pk):
+            category_serializer = self.serializer_class(self.get_queryset(pk) ,data = request.data)
+            if category_serializer.is_valid():
+                category_serializer.save()
+                return Response({'message':'Categoría editada correctamente!'}, status = status.HTTP_200_OK)
+            else:
+             return Response(category_serializer.errors,status = status.HTTP_400_BAD_REQUEST) 
+        return Response({'message':'No existe la categoría que desea editar!'},status = status.HTTP_400_BAD_REQUEST)
