@@ -4,7 +4,7 @@ from django.db import models
 
 class Category(models.Model):
     
-    categoy_name = models.CharField('Nombre de la categoria', max_length=255, blank=False , null=False, unique=True)
+    category_name = models.CharField('Nombre de la categoria', max_length=255, blank=False , null=False, unique=True)
     # TODO: Define fields here
 
     class Meta:
