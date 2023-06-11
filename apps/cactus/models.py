@@ -23,7 +23,7 @@ class Plant(models.Model):
     name = models.CharField('Nombre de la planta', max_length=255, blank=False , null=False)
     description = models.TextField('Descripcion', blank= False, null=False)
     cost = models.DecimalField('Costo', max_digits=10,  decimal_places=2, blank= False, null= False)
-    image = models.ImageField('Imagen del producto', upload_to='products_image/', blank=True, null=True)
+    image = models.ImageField('Imagen del producto', upload_to='plants_image/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category',blank=False, null= False)
     # TODO: Define fields here
 
