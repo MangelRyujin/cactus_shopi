@@ -15,7 +15,7 @@ class Category(models.Model):
 
     def __str__(self):
         """Unicode representation of Category."""
-        return self.categoy_name
+        return self.category_name
 
 
 class Plant(models.Model):
