@@ -21,6 +21,9 @@ from drf_yasg import openapi
 from django.conf.urls.static import static
 from rest_framework import permissions
 from django.conf import settings
+from django.views.static import serve
+
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -41,7 +44,17 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json/\.yaml)$', schema_view.without_ui(cache_timeout=0), name = 'schema-json'),
     path('swagger/', schema_view.with_ui('swagger',cache_timeout=0), name = 'schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc',cache_timeout=0), name = 'schema-swagger-redoc'),
+    
 ]
 
-if settings.DEBUG:
-    urlpatterns += static( settings.MEDIA_URL, document_root=settings.MEDIA_ROOT )
+urlpatterns+=[
+    re_path(r'^media/(?P<path>.*)$',serve, {
+        'document_root': settings.MEDIA_ROOT,
+    })
+]
+
+
+
+
+# if settings.DEBUG:
+#     urlpatterns += static( settings.MEDIA_URL, document_root=settings.MEDIA_ROOT )
