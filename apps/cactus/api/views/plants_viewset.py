@@ -2,6 +2,9 @@ from apps.cactus.api.serializers.plants_serializers import PlantSerializers
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from apps.cactus.models import Plant
+from rest_framework.decorators import action
+from django.db.models import Q
 
 class PlantsViewSet(viewsets.GenericViewSet):
     serializer_class = PlantSerializers
@@ -18,7 +21,7 @@ class PlantsViewSet(viewsets.GenericViewSet):
         if plants.exists():
             plants_serializers = self.serializer_class(plants,many = True)
             return Response(plants_serializers.data, status= status.HTTP_200_OK)
-        return Response({'message':'No existen plantas'}, status= status.HTTP_200_OK)
+        return Response({'message':'No existen plantas'}, status= status.HTTP_404_NOT_FOUND)
     
     def create(self,request,*args, **kargs):
         plants_serializers = self.serializer_class(data = request.data)
@@ -33,7 +36,7 @@ class PlantsViewSet(viewsets.GenericViewSet):
         if plants:
             plants_serializers = self.serializer_class(plants)
             return Response(plants_serializers.data, status= status.HTTP_200_OK)
-        return Response({'message':'No existe la planta'}, status= status.HTTP_400_BAD_REQUEST)
+        return Response({'message':'No existe la planta'}, status= status.HTTP_404_NOT_FOUND)
     
     def update(self,request,pk=None):
         
@@ -44,7 +47,7 @@ class PlantsViewSet(viewsets.GenericViewSet):
                 return Response({'message':'Planta editada correctamente!'}, status = status.HTTP_200_OK)
             else:
              return Response(plants_serializers.errors,status = status.HTTP_400_BAD_REQUEST) 
-        return Response({'message':'No existe la planta que desea editar!'},status = status.HTTP_400_BAD_REQUEST)
+        return Response({'message':'No existe la planta que desea editar!'},status = status.HTTP_404_NOT_FOUND)
 
     def destroy(self, request, pk = None):
         
@@ -52,4 +55,18 @@ class PlantsViewSet(viewsets.GenericViewSet):
         if plant:
             plant.delete()
             return Response({'message':'La planta ha sido eliminado correctamente!'}, status = status.HTTP_200_OK)
-        return Response({'error':'No existe la planta que desea eliminar!'},status = status.HTTP_400_BAD_REQUEST)
+        return Response({'error':'No existe la planta que desea eliminar!'},status = status.HTTP_404_NOT_FOUND)
+
+    
+    @action(detail = False, methods = ['get'])
+    def search_category(self,request):
+        
+        category = request.query_params.get('category')
+        plants = Plant.objects.filter(
+            Q(category = category)
+        )
+        if plants.exists():
+            plants_serializer = self.serializer_class(plants,many = True)
+            return Response(plants_serializer.data, status= status.HTTP_200_OK)
+        else:
+            return Response({'message':'No existen plantas con esa categoria'}, status= status.HTTP_404_NOT_FOUND)

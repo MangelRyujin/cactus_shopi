@@ -19,7 +19,7 @@ class CategoryViewSet(viewsets.GenericViewSet):
         if categorys.exists():
             categorys_serializers = self.serializer_class(categorys,many = True)
             return Response(categorys_serializers.data, status= status.HTTP_200_OK)
-        return Response({'message':'No existen categorias'}, status= status.HTTP_200_OK)
+        return Response({'message':'No existen categorias'}, status= status.HTTP_404_NOT_FOUND)
     
     def create(self,request,*args, **kargs):
         category_serializers = self.serializer_class(data = request.data)
@@ -34,7 +34,7 @@ class CategoryViewSet(viewsets.GenericViewSet):
         if categorys:
             categorys_serializers = self.serializer_class(categorys)
             return Response(categorys_serializers.data, status= status.HTTP_200_OK)
-        return Response({'message':'No existe la categoria'}, status= status.HTTP_400_BAD_REQUEST)
+        return Response({'message':'No existe la categoria'}, status= status.HTTP_404_NOT_FOUND)
     
     def update(self,request,pk=None):
         
@@ -45,7 +45,7 @@ class CategoryViewSet(viewsets.GenericViewSet):
                 return Response({'message':'Categoría editada correctamente!'}, status = status.HTTP_200_OK)
             else:
              return Response(category_serializer.errors,status = status.HTTP_400_BAD_REQUEST) 
-        return Response({'message':'No existe la categoría que desea editar!'},status = status.HTTP_400_BAD_REQUEST)
+        return Response({'message':'No existe la categoría que desea editar!'},status = status.HTTP_404_NOT_FOUND)
 
     def destroy(self, request, pk = None):
         
@@ -53,4 +53,4 @@ class CategoryViewSet(viewsets.GenericViewSet):
         if category:
             category.delete()
             return Response({'message':'La categoría ha sido eliminado correctamente!'}, status = status.HTTP_200_OK)
-        return Response({'error':'No existe la categoría que desea eliminar!'},status = status.HTTP_400_BAD_REQUEST)
+        return Response({'error':'No existe la categoría que desea eliminar!'},status = status.HTTP_404_NOT_FOUND)
