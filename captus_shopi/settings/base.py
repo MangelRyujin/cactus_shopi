@@ -43,7 +43,7 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
-    # 'corsheaders',
+    'corsheaders',
     'drf_yasg',
 ]
 
@@ -51,7 +51,7 @@ THIRD_APPS = [
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -121,13 +121,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
-# CORS_ORIGIN_WHITELIST =[
-#     "http://localhost:3000",
-# ]
+CORS_ORIGIN_WHITELIST =[
+    "http://localhost:3000",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
