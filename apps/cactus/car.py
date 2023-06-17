@@ -24,7 +24,7 @@ class Car:
         else:
             for key, value in self.car.items():
                 if key == str(plant.id):
-                    value["quantity" 1] = value["quantity"]+1
+                    value["quantity"] = value["quantity"]+1
                     break
         self.save()
         
