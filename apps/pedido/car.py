@@ -13,17 +13,20 @@ class Car:
         
         
     def add(self,request, plant):
-        if str(plant.id) not in self.carro.keys():
+        if str(plant.id) not in self.car.keys():
             self.car[plant.id] = {
                 "plant_id":plant.id,
                 "plant_name":plant.name,
                 "quantity": 1,
-                "cost": plant.cost * self.car[plant.id]["quantity"],
                 "image":plant.image.url,
             }
+            print('add car:')
+            print(self.car)
         else:
             for key, value in self.car.items():
                 if key == str(plant.id):
+                    print('add car +:')
+                    print(self.car)
                     value["quantity"] = value["quantity"]+1
                     break
         self.save()

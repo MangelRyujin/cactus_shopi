@@ -6,6 +6,7 @@ from apps.cactus.models import Plant
 from rest_framework.decorators import action
 from django.db.models import Q
 
+
 class PlantsViewSet(viewsets.GenericViewSet):
     serializer_class = PlantSerializers
 
@@ -62,6 +63,7 @@ class PlantsViewSet(viewsets.GenericViewSet):
     def search_category(self,request):
         
         category = request.query_params.get('category')
+        print(category)
         plants = Plant.objects.filter(
             Q(category = category)
         )
@@ -70,3 +72,6 @@ class PlantsViewSet(viewsets.GenericViewSet):
             return Response(plants_serializer.data, status= status.HTTP_200_OK)
         else:
             return Response({'message':'No existen plantas con esa categoria'}, status= status.HTTP_404_NOT_FOUND)
+        
+        
+    

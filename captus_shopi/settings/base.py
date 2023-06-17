@@ -38,6 +38,7 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     'apps.cactus',
+    'apps.pedido',
 ]
 
 
@@ -45,6 +46,7 @@ THIRD_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    
 ]
 
 
