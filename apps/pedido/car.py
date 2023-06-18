@@ -77,3 +77,11 @@ class Car:
                
             item['cost']= item['cost'] * item['qty']
             yield item
+            
+    def qty_plants(self,request):
+        qty = 0
+        
+        for value in self.car.values():
+            qty+= value['qty']
+        return qty
+        

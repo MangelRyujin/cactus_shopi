@@ -14,7 +14,7 @@ class CarViewSet(viewsets.GenericViewSet):
         car = Car(request)
         if car:
             
-            return Response({'order_items':car.car.values()},status=status.HTTP_200_OK)
+            return Response({'order_items':car.car.values(),'qty_plants':car.qty_plants(self)},status=status.HTTP_200_OK)
 
         return Response({'order_items':[]},status=status.HTTP_200_OK)
         
@@ -27,7 +27,7 @@ class CarViewSet(viewsets.GenericViewSet):
         plant = Plant.objects.filter(id = plant_id).first()
         if plant:
             car.add(request = request.data,plant=plant) 
-            return Response({'order_items':car.car},status=status.HTTP_200_OK)
+            return Response({'message':'Añadido al carrito'},status=status.HTTP_200_OK)
         return Response({'error':'No estas enviando la información'},status=status.HTTP_400_BAD_REQUEST)
     
     
@@ -37,7 +37,7 @@ class CarViewSet(viewsets.GenericViewSet):
         plant_id = self.request.query_params.get('plant_id')
         plant = Plant.objects.filter(id = plant_id).first()
         car.decrement(plant)
-        return Response({'order_items':car.car},status=status.HTTP_200_OK)
+        return Response({'message':'Eliminaste una planta del carrito'},status=status.HTTP_200_OK)
     
 
     @action(detail = False, methods = ['delete'])
