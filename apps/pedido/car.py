@@ -20,15 +20,15 @@ class Car:
             self.car[plant.id] = {
                 "plant_id": plant.id,
                 "plant_name":plant.name,
-                "quantity": 1,
+                "qty": 1,
                 "cost": round(float(plant.cost),2),
                 "image":plant.image.url if plant.image != '' else '',
             }
         else:
             for key, value in self.car.items():
                 if key == str(plant.id):
-                    value["quantity"] = value["quantity"]+1
-                    value["cost"] = round(float(plant.cost) * value["quantity"],2)
+                    value["qty"] = value["qty"]+1
+                    value["cost"] = round(float(plant.cost) * value["qty"],2)
                     break
         self.save()
         
@@ -49,9 +49,9 @@ class Car:
     def decrement(self,plant):
         for key, value in self.car.items():
             if key == str(plant.id):
-                value["quantity"] = value["quantity"]-1
-                value["cost"] = round(float(plant.cost) * value["quantity"],2)
-                if value["quantity"] < 1:
+                value["qty"] = value["qty"]-1
+                value["cost"] = round(float(plant.cost) * value["qty"],2)
+                if value["qty"] < 1:
                     self.remove(plant)
                 else:
                     self.save()
@@ -75,5 +75,5 @@ class Car:
             
         for item in car.values():
                
-            item['cost']= item['cost'] * item['quantity']
+            item['cost']= item['cost'] * item['qty']
             yield item
