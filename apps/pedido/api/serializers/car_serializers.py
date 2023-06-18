@@ -1,14 +1,5 @@
 from apps.cactus.models import Plant
+import apps.pedido.api.serializers.car_serializers
 from rest_framework import serializers
-from apps.pedido.models import Items_Pedido
 
 
-
-class CarSerializers(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Items_Pedido
-        fields = '__all__'
-
-    
-    

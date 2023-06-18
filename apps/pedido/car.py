@@ -1,5 +1,6 @@
 from django.conf import settings
 from captus_shopi.settings.base import CARRO_SESSION_ID
+from apps.cactus.models import Plant
 
 
 class Car:
@@ -13,25 +14,26 @@ class Car:
         
         
     def add(self,request, plant):
+        
         if str(plant.id) not in self.car.keys():
+            
             self.car[plant.id] = {
-                "plant_id":plant.id,
+                "plant_id": plant.id,
                 "plant_name":plant.name,
                 "quantity": 1,
-                "image":plant.image.url,
+                "cost": round(float(plant.cost),2),
+                "image":plant.image.url if plant.image != '' else '',
             }
-            print('add car:')
-            print(self.car)
         else:
             for key, value in self.car.items():
                 if key == str(plant.id):
-                    print('add car +:')
-                    print(self.car)
                     value["quantity"] = value["quantity"]+1
+                    value["cost"] = round(float(plant.cost) * value["quantity"],2)
                     break
         self.save()
         
-        
+    def car(sefl,request):
+        return sefl.car 
         
     def save(self):
         self.session["car"] = self.car
@@ -48,6 +50,7 @@ class Car:
         for key, value in self.car.items():
             if key == str(plant.id):
                 value["quantity"] = value["quantity"]-1
+                value["cost"] = round(float(plant.cost) * value["quantity"],2)
                 if value["quantity"] < 1:
                     self.remove(plant)
                 else:
@@ -61,5 +64,16 @@ class Car:
         self.session.modified=True
         
         
+    def __iter__(self): 
+        plants_id = self.car.keys()      
+        # get the product objects and add them to the cart        
+        plants = Plant.objects.filter(id__in=plants_id)
         
-        
+        car = self.car.copy()        
+        for plant in plants:            
+            car[str(plant.id)]['plant'] = plant
+            
+        for item in car.values():
+               
+            item['cost']= item['cost'] * item['quantity']
+            yield item
