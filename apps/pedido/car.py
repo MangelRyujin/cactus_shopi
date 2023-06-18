@@ -84,4 +84,10 @@ class Car:
         for value in self.car.values():
             qty+= value['qty']
         return qty
+    
+    def cost_car(self,request):
+        cost = 0
         
+        for value in self.car.values():
+            cost+= value['cost']
+        return cost
