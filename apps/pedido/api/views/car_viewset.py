@@ -14,7 +14,7 @@ class CarViewSet(viewsets.GenericViewSet):
         car = Car(request)
         if car:
             
-            return Response({'order_items':car.car},status=status.HTTP_200_OK)
+            return Response({'order_items':car.car.values()},status=status.HTTP_200_OK)
 
         return Response({'order_items':[]},status=status.HTTP_200_OK)
         
