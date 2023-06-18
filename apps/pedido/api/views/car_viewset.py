@@ -12,11 +12,11 @@ class CarViewSet(viewsets.GenericViewSet):
     
     def list(self,request,*args,**kargs):
         car = Car(request)
-        if car:
+        if car.car != {}:
             return Response({'order_items':car.car},status=status.HTTP_200_OK)
             
         else:
-            return Response({'carro':'No existe un carro'},status=status.HTTP_404_NOT_FOUND)
+            return Response({'carro':'Carro vacio'},status=status.HTTP_200_OK)
         
         
         
