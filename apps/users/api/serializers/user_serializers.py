@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.users.models import User
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
         
@@ -45,13 +45,13 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         fields = ('username','email','name','last_name','image')
 
 
-# class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
-#     def validate(self, attrs):
-#         data = super().validate(attrs)
-#         refresh = self.get_token(self.user)
-#         data['lifetime'] = int(refresh.access_token.lifetime.total_seconds())
-#         return data
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['lifetime'] = int(refresh.access_token.lifetime.total_seconds())
+        return data
     
  
 class CustomUserSerializer(serializers.ModelSerializer):
