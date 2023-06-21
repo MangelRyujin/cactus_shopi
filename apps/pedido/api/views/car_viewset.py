@@ -6,12 +6,19 @@ from apps.cactus.models import Plant
 from rest_framework.decorators import action
 from apps.pedido.car import Car
 from rest_framework.permissions import IsAuthenticated
+from apps.pedido.models import Order, Items_Order
+from apps.users.models import User
 
 class CarViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
     
     def list(self,request,*args,**kargs):
         car = Car(request)
+        print(request.user.id)
+        print(str(request.auth))
+        for item in car.car.values():
+            print(item['cost'])
+       
         if car:
             
             return Response({'order_items':car.car.values(),'qty_plants':car.qty_plants(self),'cost_car':car.cost_car(self)},status=status.HTTP_200_OK)
@@ -45,3 +52,32 @@ class CarViewSet(viewsets.GenericViewSet):
         car = Car(request)
         car.clear()
         return Response({'car':'Carro limpiado'},status=status.HTTP_200_OK)
+    
+    @action(detail = False, methods = ['post'])
+    def crear_order(self,request,*args, **kargs):
+        car = Car(request)
+        user = User.objects.filter(id = request.user.id).first()
+        order=  Order.objects.create(
+            user = user,
+            cost = car.cost_car(self)
+        )
+        
+        for item in car.car.values():
+            plant = Plant.objects.filter(id = item['plant_id']).first()
+            Items_Order.objects.create(
+            plant = plant,
+            order = order,
+            cost = item['cost'],
+            qty = item['qty'],
+            )
+        car.clear()
+        return Response({'message':'Compra realizada'},status=status.HTTP_200_OK)
+        
+        
+        
+    # def create(self,request,*args, **kargs):
+    #     plants_serializers = self.serializer_class(data = request.data)
+    #     if plants_serializers.is_valid():
+    #         plants_serializers.save()
+    #         return Response({'message':'Planta creada correctamente'}, status=status.HTTP_201_CREATED)
+    #     return Response({'errors':plants_serializers.errors}, status= status.HTTP_400_BAD_REQUEST)     
