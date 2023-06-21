@@ -24,13 +24,13 @@ class Login(TokenObtainPairView):
             username = username, 
             password = password
             )
-        userr = User.objects.filter(username = request.data.get('username'))
+        userr = User.objects.filter(username = request.data.get('username')).first()
         if user:
             login_serializer = self.serializer_class(data = request.data)
             if login_serializer.is_valid():
                 user_serializer = CustomUserSerializer(user)
                 if user_serializer:
-                    Login.delete_sessions(userr.first()) 
+                    Login.delete_sessions(request,userr.id) 
                     
                 return Response({'token': login_serializer.validated_data.get('access'),
                                  'refresh_token':login_serializer.validated_data.get('refresh'),
@@ -40,13 +40,20 @@ class Login(TokenObtainPairView):
         return Response({'error':'Contraseña o nombre de ususario incorrecto'},status = status.HTTP_400_BAD_REQUEST)        
 
             
-    def delete_sessions(user):
+    def delete_sessions(request,user):
+        from apps.pedido.car import Car
+        
+        car = Car(request)
         all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
-        if all_sessions.exists():
+        if all_sessions:
             for session in all_sessions:
                 session_data = session.get_decoded()
-                if user.id == int(session_data.get('_auth_user_id')):
-                    session.delete()
+                if session_data.get('_auth_user_id') is None :
+                    car.clear()
+                else:
+                    if  user == int(session_data.get('_auth_user_id')):
+                        print('son iguales')
+                        session.delete()
     
     
 class Logout(GenericAPIView):
@@ -59,7 +66,7 @@ class Logout(GenericAPIView):
         user = User.objects.filter(id = request.data.get('user',0))
         if user.exists():
             RefreshToken.for_user(user.first())
-            Login.delete_sessions(user.first())
+            Login.delete_sessions(request,user.first())
             
             return Response({'message':'Sesion cerrada correctamente!'},status = status.HTTP_200_OK) 
         return Response({'error':'No existe el usuario'},status = status.HTTP_400_BAD_REQUEST)
@@ -67,12 +74,19 @@ class Logout(GenericAPIView):
     
     
         
-    def delete_sessions(user):
+    def delete_sessions(request,user):
+        from apps.pedido.car import Car
+        
+        car = Car(request)
         all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
-        if all_sessions.exists():
+        if all_sessions:
             for session in all_sessions:
                 session_data = session.get_decoded()
-                if user.id == int(session_data.get('_auth_user_id')):
-                    session.delete()
+                if session_data.get('_auth_user_id') is None :
+                    car.clear()
+                else:
+                    if  user == int(session_data.get('_auth_user_id')):
+                        print('son iguales')
+                        session.delete()
     
     

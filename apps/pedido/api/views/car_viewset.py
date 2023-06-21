@@ -5,10 +5,10 @@ from rest_framework import status
 from apps.cactus.models import Plant
 from rest_framework.decorators import action
 from apps.pedido.car import Car
-
+from rest_framework.permissions import IsAuthenticated
 
 class CarViewSet(viewsets.GenericViewSet):
-    
+    permission_classes = (IsAuthenticated,)
     
     def list(self,request,*args,**kargs):
         car = Car(request)
