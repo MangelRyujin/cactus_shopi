@@ -41,14 +41,14 @@ class UserViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
     
     def get_queryset(self,pk = None):
-        return self.serializer_class().Meta.model.objects.filter(id=pk).first()
+        if pk is not None:
+            return self.serializer_class().Meta.model.objects.filter(id=pk).first()
+        return None
 
     def list(self,request):
         pk = request.user.id
-        print(request.user.id)
         user = self.get_queryset(pk)
-        print(user)
-        if user:
+        if user is not None:
             user_serializer = self.serializer_class(user)
             return Response(user_serializer.data, status = status.HTTP_200_OK)
         return Response({'error':'No existe el usuario!'},status = status.HTTP_404_NOT_FOUND)
@@ -56,28 +56,33 @@ class UserViewSet(viewsets.GenericViewSet):
     def update(self,request,pk=None):
     
         data = validate_files(request.data, 'image', True)
-        user = self.get_queryset(pk)
-        if user:
-            user_serializers = UpdateUserSerializer(user ,data = data)
-            if user_serializers.is_valid():
-                user_serializers.save()
-                return Response({'message':'Usuario editado correctamente!'}, status = status.HTTP_200_OK)
-            else:
-             return Response({'message':'Error al editar los datos!','errors':user_serializers.errors},status = status.HTTP_400_BAD_REQUEST) 
-        return Response({'message':'No existe el usuario que desea editar!'},status = status.HTTP_404_NOT_FOUND)
-
+        id = request.user.id
+        if pk == str(id):
+            user = self.get_queryset(pk)
+            if user:
+                user_serializers = UpdateUserSerializer(user ,data = data)
+                if user_serializers.is_valid():
+                    user_serializers.save()
+                    return Response({'message':'Usuario editado correctamente!'}, status = status.HTTP_200_OK)
+                else:
+                    return Response({'message':'Error al editar los datos!','errors':user_serializers.errors},status = status.HTTP_400_BAD_REQUEST) 
+            return Response({'message':'No existe el usuario que desea editar!'},status = status.HTTP_404_NOT_FOUND)
+        
+        return Response({'message':'No puedes editar ese usuario!'},status = status.HTTP_400_BAD_REQUEST)
         
     
     
-    def destroy(self, request, pk = None):
+    def destroy(self, request,pk=None):
+        id = request.user.id
+        if pk == str(id):
+            user = self.get_queryset(pk)
+            if user:
+                user.delete()
+                return Response({'message':'El usuario ha sido eliminado correctamente!'}, status = status.HTTP_200_OK)
+            return Response({'error':'No existe el usuario que desa eliminar!'},status = status.HTTP_404_NOT_FOUND)
+        return Response({'message':'No puedes eliminar este usuario!'},status = status.HTTP_400_BAD_REQUEST)
         
-        user = self.get_queryset(pk)
-        user_delete = User.objects.filter(id = pk).first()
-        if user:
-            user_delete.delete()
-            return Response({'message':'El usuario ha sido eliminado correctamente!'}, status = status.HTTP_200_OK)
-        return Response({'error':'No existe el usuario que desa eliminar!'},status = status.HTTP_404_NOT_FOUND)
-
+        
     @action(detail = True, methods = ['post'])
     def set_password(self,request,pk=None):
         user = self.get_queryset(pk)
