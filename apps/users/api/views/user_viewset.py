@@ -1,3 +1,4 @@
+from apps.users.api.serializers.plants_serializers import PlantSerializers
 from apps.users.api.serializers.user_serializers import UserSerializer, Password_SetSerializer, UpdateUserSerializer
 from apps.users.models import User
 from apps.users.utils import validate_files
@@ -9,25 +10,44 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 
+class PlantsViewSet(viewsets.GenericViewSet):
+    serializer_class = PlantSerializers
+
+    
+    def get_queryset(self,pk = None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.all()
+        return self.get_serializer().Meta.model.objects.filter(id = pk).first()
+    
+    def list(self, request, *args, **kargs):
+        
+        plants = self.get_queryset()
+        if plants.exists():
+            plants_serializers = self.serializer_class(plants,many = True)
+            return Response(plants_serializers.data, status= status.HTTP_200_OK)
+        return Response({'message':'No existen plantas'}, status= status.HTTP_404_NOT_FOUND)
+    
+    def retrieve(self, request, pk = None):
+        
+        plants = self.get_queryset(pk)
+        if plants:
+            plants_serializers = self.serializer_class(plants)
+            return Response(plants_serializers.data, status= status.HTTP_200_OK)
+        return Response({'message':'No existe la planta'}, status= status.HTTP_404_NOT_FOUND)
+    
+
 class UserViewSet(viewsets.GenericViewSet):
     serializer_class= UserSerializer
-    
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     
     def get_queryset(self,pk = None):
         return self.serializer_class().Meta.model.objects.filter(id=pk).first()
 
-    def create(self, request):
-        data = validate_files(request.data, 'image')
-        serializers = self.serializer_class(data = data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response({'message':'Usuario creado correctamente!'}, status = status.HTTP_201_CREATED)
-        return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
-    
-    def retrieve(self,request, pk = None):
-        
+    def list(self,request):
+        pk = request.user.id
+        print(request.user.id)
         user = self.get_queryset(pk)
+        print(user)
         if user:
             user_serializer = self.serializer_class(user)
             return Response(user_serializer.data, status = status.HTTP_200_OK)
@@ -69,3 +89,18 @@ class UserViewSet(viewsets.GenericViewSet):
 
         return Response({'message':'Error al enviar datos','error':password_serializer.errors},status = status.HTTP_400_BAD_REQUEST)
     
+
+class UserRegisterViewSet(viewsets.GenericViewSet):
+    serializer_class= UserSerializer
+    
+    
+    def get_queryset(self,pk = None):
+        return self.serializer_class().Meta.model.objects.filter(id=pk).first()
+
+    def create(self, request):
+        data = validate_files(request.data, 'image')
+        serializers = self.serializer_class(data = data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response({'message':'Usuario creado correctamente!'}, status = status.HTTP_201_CREATED)
+        return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)

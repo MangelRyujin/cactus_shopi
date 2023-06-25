@@ -63,10 +63,10 @@ class Logout(GenericAPIView):
     
     
     def post(self,request,*args,**kwargs):
-        user = User.objects.filter(id = request.data.get('user',0))
-        if user.exists():
-            RefreshToken.for_user(user.first())
-            Login.delete_sessions(request,user.first())
+        user = User.objects.filter(id = request.user.id).first()
+        if user:
+            RefreshToken.for_user(user)
+            Login.delete_sessions(request,user.id)
             
             return Response({'message':'Sesion cerrada correctamente!'},status = status.HTTP_200_OK) 
         return Response({'error':'No existe el usuario'},status = status.HTTP_400_BAD_REQUEST)
@@ -85,7 +85,7 @@ class Logout(GenericAPIView):
                 if session_data.get('_auth_user_id') is None :
                     car.clear()
                 else:
-                    if  user == int(session_data.get('_auth_user_id')):
+                    if  user.id == int(session_data.get('_auth_user_id')):
                         print('son iguales')
                         session.delete()
     
