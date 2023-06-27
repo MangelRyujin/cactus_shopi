@@ -75,9 +75,4 @@ class CarViewSet(viewsets.GenericViewSet):
         
         
         
-    # def create(self,request,*args, **kargs):
-    #     plants_serializers = self.serializer_class(data = request.data)
-    #     if plants_serializers.is_valid():
-    #         plants_serializers.save()
-    #         return Response({'message':'Planta creada correctamente'}, status=status.HTTP_201_CREATED)
-    #     return Response({'errors':plants_serializers.errors}, status= status.HTTP_400_BAD_REQUEST)     
+   

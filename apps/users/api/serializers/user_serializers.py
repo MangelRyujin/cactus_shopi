@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.users.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.models import Group
 
 
         
@@ -20,12 +21,44 @@ class UserSerializer(serializers.ModelSerializer):
         }
     
     def create(self, validated_data):
+        print(f'Esta es la data validada: {validated_data}')
         user = User(**validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        group = Group.objects.get(name='Client')
+        user.groups.add(group)
+        
+        
         return user
     
     
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','name','last_name','email','image','username','password')
+        
+    def to_representation(self, instance):
+        return {
+            'id':instance.id,
+            'name':instance.name,
+            'last_name':instance.last_name,
+            'username':instance.username,
+            'email':instance.email,
+            'image':instance.image.url if instance.image != '' else '',   
+        }
+    
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.is_staff=True
+        user.save()
+        group = Group.objects.get(name='Admin')
+        user.groups.add(group)
+    
+        
+        return user
+
+
     
         
 class Password_SetSerializer(serializers.Serializer):

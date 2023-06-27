@@ -3,8 +3,11 @@
 from django.db import migrations, models
 
 
-class Migration(migrations.Migration):
 
+
+class Migration(migrations.Migration):
+    
+    
     initial = True
 
     dependencies = [
@@ -12,6 +15,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        
         migrations.CreateModel(
             name='User',
             fields=[
@@ -34,4 +38,5 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Usuarios',
             },
         ),
+        
     ]
