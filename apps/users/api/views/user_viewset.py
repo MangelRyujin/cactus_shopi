@@ -1,5 +1,5 @@
 from apps.users.api.serializers.plants_serializers import PlantSerializers
-from apps.users.api.serializers.user_serializers import AdminSerializer,UserSerializer, Password_SetSerializer, UpdateUserSerializer
+from apps.users.api.serializers.user_serializers import UserSerializer, Password_SetSerializer, UpdateUserSerializer
 from apps.users.models import User
 from apps.users.utils import validate_files
 
@@ -110,17 +110,17 @@ class UserRegisterViewSet(viewsets.GenericViewSet):
             return Response({'message':'Usuario creado correctamente!'}, status = status.HTTP_201_CREATED)
         return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
     
-class AdminRegisterViewSet(viewsets.GenericViewSet):
-    serializer_class= AdminSerializer
+# class AdminRegisterViewSet(viewsets.GenericViewSet):
+#     serializer_class= AdminSerializer
     
     
-    def get_queryset(self,pk = None):
-        return self.serializer_class().Meta.model.objects.filter(id=pk).first()
+#     def get_queryset(self,pk = None):
+#         return self.serializer_class().Meta.model.objects.filter(id=pk).first()
 
-    def create(self, request):
-        data = validate_files(request.data, 'image')
-        serializers = self.serializer_class(data = data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response({'message':'Administrador creado correctamente!'}, status = status.HTTP_201_CREATED)
-        return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
+#     def create(self, request):
+#         data = validate_files(request.data, 'image')
+#         serializers = self.serializer_class(data = data)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response({'message':'Administrador creado correctamente!'}, status = status.HTTP_201_CREATED)
+#         return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)

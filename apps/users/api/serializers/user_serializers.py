@@ -32,31 +32,31 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     
-class AdminSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id','name','last_name','email','image','username','password')
+# class AdminSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('id','name','last_name','email','image','username','password')
         
-    def to_representation(self, instance):
-        return {
-            'id':instance.id,
-            'name':instance.name,
-            'last_name':instance.last_name,
-            'username':instance.username,
-            'email':instance.email,
-            'image':instance.image.url if instance.image != '' else '',   
-        }
+#     def to_representation(self, instance):
+#         return {
+#             'id':instance.id,
+#             'name':instance.name,
+#             'last_name':instance.last_name,
+#             'username':instance.username,
+#             'email':instance.email,
+#             'image':instance.image.url if instance.image != '' else '',   
+#         }
     
-    def create(self, validated_data):
-        user = User(**validated_data)
-        user.set_password(validated_data['password'])
-        user.is_staff=True
-        user.save()
-        group = Group.objects.get(name='Admin')
-        user.groups.add(group)
+#     def create(self, validated_data):
+#         user = User(**validated_data)
+#         user.set_password(validated_data['password'])
+#         user.is_staff=True
+#         user.save()
+#         group = Group.objects.get(name='Admin')
+#         user.groups.add(group)
     
         
-        return user
+#         return user
 
 
     
