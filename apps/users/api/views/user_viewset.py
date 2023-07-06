@@ -109,18 +109,3 @@ class UserRegisterViewSet(viewsets.GenericViewSet):
             serializers.save()
             return Response({'message':'Usuario creado correctamente!'}, status = status.HTTP_201_CREATED)
         return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
-    
-# class AdminRegisterViewSet(viewsets.GenericViewSet):
-#     serializer_class= AdminSerializer
-    
-    
-#     def get_queryset(self,pk = None):
-#         return self.serializer_class().Meta.model.objects.filter(id=pk).first()
-
-#     def create(self, request):
-#         data = validate_files(request.data, 'image')
-#         serializers = self.serializer_class(data = data)
-#         if serializers.is_valid():
-#             serializers.save()
-#             return Response({'message':'Administrador creado correctamente!'}, status = status.HTTP_201_CREATED)
-#         return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
