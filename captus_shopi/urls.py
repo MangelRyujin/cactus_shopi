@@ -45,9 +45,9 @@ urlpatterns = [
     path('plants/', include('apps.cactus.api.routers')),
     path('client/', include('apps.pedido.api.routers')),
     path('user/', include('apps.users.api.routers')),
-    re_path(r'^swagger(?P<format>\.json/\.yaml)$', schema_view.without_ui(cache_timeout=0), name = 'schema-json'),
-    path('swagger/', schema_view.with_ui('swagger',cache_timeout=0), name = 'schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc',cache_timeout=0), name = 'schema-swagger-redoc'),
+    # re_path(r'^swagger(?P<format>\.json/\.yaml)$', schema_view.without_ui(cache_timeout=0), name = 'schema-json'),
+    # path('swagger/', schema_view.with_ui('swagger',cache_timeout=0), name = 'schema-swagger-ui'),
+    # path('redoc/', schema_view.with_ui('redoc',cache_timeout=0), name = 'schema-swagger-redoc'),
     path('login/', Login.as_view() ,name='Login'),
     path('logout/', Logout.as_view() ,name='Logout'),
 ]
