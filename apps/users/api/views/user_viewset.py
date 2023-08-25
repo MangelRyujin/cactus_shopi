@@ -1,4 +1,4 @@
-from apps.users.api.serializers.plants_serializers import PlantSerializers
+from apps.users.api.serializers.plants_serializers import PlantsSerializers
 from apps.users.api.serializers.user_serializers import UserSerializer, Password_SetSerializer, UpdateUserSerializer
 from apps.users.models import User
 from apps.users.utils import validate_files
@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class PlantsViewSet(viewsets.GenericViewSet):
-    serializer_class = PlantSerializers
+    serializer_class = PlantsSerializers
 
     
     def get_queryset(self,pk = None):
