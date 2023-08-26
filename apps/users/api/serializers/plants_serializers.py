@@ -17,3 +17,5 @@ class PlantsSerializers(serializers.ModelSerializer):
             'cost' : instance.cost,
             'category' : instance.category.category_name,
         }
+        
+        
