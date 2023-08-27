@@ -88,7 +88,7 @@ class CarViewSet(viewsets.GenericViewSet):
             order_serializer.save()
             self.create_items(list,order_serializer.data.get('order'))
             
-            return Response({'message':'Order create'},status=status.HTTP_200_OK) 
+            return Response({'message':'Order create'},status=status.HTTP_201_CREATED)
         return Response({'error':order_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
     
     
