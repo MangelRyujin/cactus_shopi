@@ -1,4 +1,5 @@
 
+import rest_framework
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,10 +9,11 @@ from apps.pedido.car import Car
 from rest_framework.permissions import IsAuthenticated
 from apps.pedido.models import Order, Items_Order
 from apps.users.models import User
+from apps.pedido.api.serializers.order_serializers import OrderSerializer
 
 class CarViewSet(viewsets.GenericViewSet):
-    permission_classes = (IsAuthenticated,)
-    
+    # permission_classes = (IsAuthenticated,)
+    serializer_class = OrderSerializer
     def list(self,request,*args,**kargs):
         car = Car(request)
         print(request.user.id)
@@ -71,5 +73,34 @@ class CarViewSet(viewsets.GenericViewSet):
             )
         car.clear()
         return Response({'message':'Compra realizada'},status=status.HTTP_200_OK)
+    
+    
+    
+    @action(detail = False, methods = ['post'])
+    def create_order(self,request,list,*args, **kargs):
+        cost_max = 0
+        for plant_id in list:
+            plant = User.objects.filter(id = plant_id).first()
+            cost_max+= plant.cost
+        
+        user = User.objects.filter(id = request.user.id).first()
+        order=  Order.objects.create(
+            user = user,
+            cost = cost_max
+        )
         
         
+            
+        
+        for plant_id in list:
+            plant = Plant.objects.filter(id = plant_id).first()
+            Items_Order.objects.create(
+            plant = plant,
+            order = order,
+            )
+        serializers= self.serializer_class(order)   
+        if serializers.is_valid():
+            
+            return Response({'message':'Compra realizada', 'order':serializers.data},status=status.HTTP_200_OK)
+        
+        return Response({'error':'Error al realizar la compra','order': serializers.errors},status = status.HTTP_400_BAD_REQUEST)
