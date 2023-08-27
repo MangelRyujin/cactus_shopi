@@ -8,7 +8,7 @@ from apps.users.models import User
 
 class Order(models.Model):
     """Model definition for Order."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Plant',blank=False, null= False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User',blank=False, null= False)
     cost = models.DecimalField('Costo', max_digits=10,  decimal_places=2, blank= False, null= False)
     
     # TODO: Define fields here

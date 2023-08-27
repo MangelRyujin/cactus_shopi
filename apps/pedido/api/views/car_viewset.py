@@ -9,7 +9,7 @@ from apps.pedido.car import Car
 from rest_framework.permissions import IsAuthenticated
 from apps.pedido.models import Order, Items_Order
 from apps.users.models import User
-from apps.pedido.api.serializers.order_serializers import OrderSerializer
+from apps.pedido.api.serializers.order_serializers import ItemsOrderSerializer, OrderSerializer
 
 class CarViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
@@ -54,53 +54,62 @@ class CarViewSet(viewsets.GenericViewSet):
         car.clear()
         return Response({'car':'Carro limpiado'},status=status.HTTP_200_OK)
     
-    @action(detail = False, methods = ['post'])
-    def crear_order(self,request,*args, **kargs):
-        car = Car(request)
-        user = User.objects.filter(id = request.user.id).first()
-        order=  Order.objects.create(
-            user = user,
-            cost = car.cost_car(self)
-        )
-        
-        for item in car.car.values():
-            plant = Plant.objects.filter(id = item['plant_id']).first()
+   
+    
+    
+    def costo_max(self,list):
+        cost = 0.00
+        for item in list.get('order'):
+            cost+= item.get('cost')
+        return cost
+    
+    def create_items(self, list,id_order):
+        for item in list.get('order'):
             Items_Order.objects.create(
-            plant = plant,
-            order = order,
-            cost = item['cost'],
-            qty = item['qty'],
+                plant = Plant.objects.filter(id=item.get('id')).first() ,
+                order = Order.objects.filter(id=id_order).first() ,
+                cost = item.get('cost'),
+                qty = item.get('qty')
             )
-        car.clear()
-        return Response({'message':'Compra realizada'},status=status.HTTP_200_OK)
-    
-    
+            
     
     @action(detail = False, methods = ['post'])
-    def create_order(self,request,list,*args, **kargs):
-        cost_max = 0
-        for plant_id in list:
-            plant = User.objects.filter(id = plant_id).first()
-            cost_max+= plant.cost
+    def create_order(self,request,*args, **kargs):
+        list = self.request.data
+        cost_order = self.costo_max(list)
+        user_order = User.objects.filter(id = request.user.id).first()
+        order = {
+            'user': user_order.id,
+            'cost':cost_order
+        }
+        order_serializer = self.serializer_class(data = order)
         
-        user = User.objects.filter(id = request.user.id).first()
-        order=  Order.objects.create(
-            user = user,
-            cost = cost_max
-        )
-        
-        
+        if order_serializer.is_valid():
+            order_serializer.save()
+            self.create_items(list,order_serializer.data.get('order'))
             
+            return Response({'message':'Order create'},status=status.HTTP_200_OK) 
+        return Response({'error':order_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+    
+    #  @action(detail = False, methods = ['post'])
+    # def crear_order(self,request,*args, **kargs):
+    #     car = Car(request)
+    #     user = User.objects.filter(id = request.user.id).first()
+    #     order=  Order.objects.create(
+    #         user = user,
+    #         cost = car.cost_car(self)
+    #     )
         
-        for plant_id in list:
-            plant = Plant.objects.filter(id = plant_id).first()
-            Items_Order.objects.create(
-            plant = plant,
-            order = order,
-            )
-        serializers= self.serializer_class(order)   
-        if serializers.is_valid():
-            
-            return Response({'message':'Compra realizada', 'order':serializers.data},status=status.HTTP_200_OK)
-        
-        return Response({'error':'Error al realizar la compra','order': serializers.errors},status = status.HTTP_400_BAD_REQUEST)
+    #     for item in car.car.values():
+    #         plant = Plant.objects.filter(id = item['plant_id']).first()
+    #         Items_Order.objects.create(
+    #         plant = plant,
+    #         order = order,
+    #         cost = item['cost'],
+    #         qty = item['qty'],
+    #         )
+    #     car.clear()
+    #     return Response({'message':'Compra realizada'},status=status.HTTP_200_OK)

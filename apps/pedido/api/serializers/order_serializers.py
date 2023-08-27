@@ -10,6 +10,7 @@ class OrderSerializer(serializers.ModelSerializer):
         
     def to_representation(self, instance):
         return {
+            'order':instance.id,
             'user':instance.user.id,
             'cost':instance.cost,
         }
