@@ -12,7 +12,7 @@ from apps.users.models import User
 from apps.pedido.api.serializers.order_serializers import OrderSerializer
 
 class CarViewSet(viewsets.GenericViewSet):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = OrderSerializer
     def list(self,request,*args,**kargs):
         car = Car(request)
