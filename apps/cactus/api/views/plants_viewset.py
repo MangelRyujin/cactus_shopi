@@ -63,7 +63,6 @@ class PlantsViewSet(viewsets.GenericViewSet):
     def search_category(self,request):
         
         category = request.query_params.get('category')
-        print(category)
         plants = Plant.objects.filter(
             Q(category = category)
         )
